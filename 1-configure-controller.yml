@@ -1,0 +1,13 @@
+---
+- name: Configure automation controller
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    # replace this with your GUID
+    guid: 4h9rn
+  tasks:
+  - name: Create an inventory
+    awx.awx.inventory:
+      name: AWX inventory
+      organization: Default

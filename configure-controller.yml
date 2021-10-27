@@ -1,0 +1,69 @@
+---
+- name: Configure automation controller
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    # ***replace this with your GUID
+    guid: 95l92
+    # Lookup password from env variables
+    controller_password: "{{ lookup('ansible.builtin.env', 'CONTROLLER_PASSWORD') }}"
+  tasks:
+  - name: Create an inventory
+    awx.awx.inventory:
+      name: AWX inventory
+      organization: Default
+  - name: Add host
+    awx.awx.host:
+      name: "{{item}}"
+      description: "Nodes"
+      inventory: AWX inventory
+      state: present
+    loop: 
+      - node1.{{guid}}.internal
+      - node2.{{guid}}.internal
+      - node3.{{guid}}.internal
+  - name: Machine Credentials
+    awx.awx.credential:
+      name: AWX Credentials
+      kind: ssh
+      organization: Default
+      inputs:
+        username: ec2-user
+        ssh_key_data: "{{ lookup('file', '~/.ssh/' + guid + 'key.pem' ) }}"
+  - name: AWX Project
+    awx.awx.project:
+      name: AWX Project
+      organization: Default
+      state: present
+      scm_update_on_launch: True
+      scm_delete_on_update: True
+      scm_type: git
+      scm_url: https://github.com/goetzrieger/ansible-labs-playbooks.git
+  - name: AWX Job Template
+    awx.awx.job_template:
+      name: Install Apache
+      organization: Default
+      state: present
+      inventory: AWX inventory
+      become_enabled: True
+      playbook: apache_install.yml
+      project: AWX Project
+      credential: AWX Credentials
+  - name: List AWX Job Templates
+    uri:
+      url: "https://{{ item }}/api/v2/job_templates/"
+      user: admin
+      password: "{{ controller_password }}"
+      force_basic_auth: yes
+      validate_certs: false
+    loop: 
+      - autoctl2.{{guid}}.internal
+      - autoctl3.{{guid}}.internal
+    register: list_templates
+  - name: Display AWX Job Templates
+    debug:
+#      var: list_templates
+      msg: 
+        - "autoctl2 New Job Template = {{ list_templates.results[0].json.results[1].name }}"
+        - "autoctl3 New Job Template = {{ list_templates.results[1].json.results[1].name }} "

@@ -1,0 +1,40 @@
+---
+- name: Configure automation controller
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    # replace this with your GUID
+    guid: 4h9rn
+  tasks:
+  - name: Create an inventory
+    awx.awx.inventory:
+      name: AWX inventory
+      organization: Default
+  - name: Add host
+    awx.awx.host:
+      name: "{{item}}"
+      description: "Nodes"
+      inventory: AWX inventory
+      state: present
+    loop: 
+      - node1.{{guid}}.internal
+      - node2.{{guid}}.internal
+      - node3.{{guid}}.internal
+  - name: Machine Credentials
+    awx.awx.credential:
+      name: AWX Credentials
+      kind: ssh
+      organization: Default
+      inputs:
+        username: ec2-user
+        ssh_key_data: "{{ lookup('file', '~/.ssh/' + guid + 'key.pem' ) }}"
+  - name: AWX Project
+    awx.awx.project:
+      name: AWX Project
+      organization: Default
+      state: present
+      scm_update_on_launch: True
+      scm_delete_on_update: True
+      scm_type: git
+      scm_url: https://github.com/goetzrieger/ansible-labs-playbooks.git

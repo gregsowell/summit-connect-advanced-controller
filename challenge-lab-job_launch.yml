@@ -1,0 +1,14 @@
+---
+- name: Challenge Lab - launch job
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    # ***replace this with your GUID
+    guid: 95l92
+    # Lookup password from env variables
+    controller_password: "{{ lookup('ansible.builtin.env', 'CONTROLLER_PASSWORD') }}"
+  tasks:
+  - name: Launch a job
+    awx.awx.job_launch:
+      job_template: "Install Apache"
