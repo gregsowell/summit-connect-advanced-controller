@@ -1,0 +1,42 @@
+---
+- name: Configure automation controller
+  hosts: localhost
+  become: false
+  gather_facts: false
+  tasks:
+
+  - name: Compliance STIG packages Job Template
+    awx.awx.job_template:
+      name: Compliance STIG packages
+      organization: Default
+      state: present
+      inventory: AWX inventory
+      become_enabled: True
+      playbook: stig-packages.yml
+      project: AWX Project
+      credential: AWX Credentials
+      execution_environment: Ansible Engine 2.9 execution environment
+
+  - name: Compliance STIG config Job Template
+    awx.awx.job_template:
+      name: Compliance STIG config
+      organization: Default
+      state: present
+      inventory: AWX inventory
+      become_enabled: True
+      playbook: stig-config.yml
+      project: AWX Project
+      credential: AWX Credentials
+      execution_environment: Ansible Engine 2.9 execution environment
+
+  - name: Compliance CIS Job Template
+    awx.awx.job_template:
+      name: Compliance CIS
+      organization: Default
+      state: present
+      inventory: AWX inventory
+      become_enabled: True
+      playbook: cis.yml
+      project: AWX Project
+      credential: AWX Credentials
+      execution_environment: Ansible Engine 2.9 execution environment
