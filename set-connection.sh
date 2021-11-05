@@ -1,4 +1,3 @@
-# set-connection.sh
 # the Base URI of our automation controller cluster node
 export CONTROLLER_HOST=https://autoctl1.<GUID>.<SANDBOXID>.opentlc.com
 # the user name
