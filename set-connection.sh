@@ -1,3 +1,6 @@
+# If this script fails to run it's because I created it on windows; run this on your 
+#   command line to fix it: "sed -i 's/\r$//' set-connection.sh"
+#
 # the Base URI of our automation controller cluster node
 export CONTROLLER_HOST=https://autoctl1.<GUID>.<SANDBOXID>.opentlc.com
 # the user name
