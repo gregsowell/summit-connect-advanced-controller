@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cat inventory_list
+curl -sS https://raw.githubusercontent.com/ansible-labs-crew/playbooks_adv_summit2021/master/inventory/inventory_list
