@@ -1,9 +1,3 @@
 #!/bin/bash
 
-if [ "$1" == "--list" ] ; then
-    cat inventory_list
-elif [ "$1" == "--host" ]; then
-    echo '{"_meta": {"hostvars": {}}}'
-else
-    echo "{ }"
-fi
+cat inventory_list
